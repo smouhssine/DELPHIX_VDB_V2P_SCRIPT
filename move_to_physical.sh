@@ -144,14 +144,14 @@ Replace with a dest check test
 # validate redo disk group name
 if $addredodest; then
    echo $redo_file | grep '^+' >/dev/null 2>&1 || \
-   die "$script: Diskgroup for online redo ($redodg) must start with '+'"
+   die "$script: Diskgroup for online redo ($redo_dest) must start with '+'"
 fi
 
 # validate data disk group name
-echo $datadg | grep '^+' >/dev/null 2>&1 || \
-die "$script: Diskgroup for data ($datadg) needs to start with '+'"
+echo $datafile_dest | grep '^+' >/dev/null 2>&1 || \
+die "$script: Diskgroup for data ($datafile_dest) needs to start with '+'"
 
-formatdatadg="'"$datafile_dest"'"
+formatdatafile_dest="'"$datafile_dest"'"
 
 # Generated sql scripts
 MOVETEMP="$here/move_tempfiles_$RUNID.sql"
@@ -439,7 +439,7 @@ rman target / >$RMANLOG <<EOF
    alter database mount;
    configure device type disk parallelism $parallelism;
    # skip offline datafiles on the backup
-   backup as copy format $formatdatadg database skip offline;
+   backup as copy format $formatdatafile_dest database skip offline;
    # use datafilecopies in destination
    switch database to copy;
    configure snapshot controlfile name to $snapshotcfile;
@@ -468,7 +468,7 @@ if [ "$rac" = "TRUE" ]; then
     [ -z "$myinstname" ] || ORACLE_SID="$myinstname"
     export ORACLE_SID
     # configure spfile location for target RAC database
-    srvctl modify database -d $dbunique -p ${datadg}/${dbunique}/spfile${dbunique}.ora
+    srvctl modify database -d $dbunique -p ${datafile_dest}/${dbunique}/spfile${dbunique}.ora
     # startup all RAC instances with updated parameters
     srvctl start database -d $dbunique >>$RESTARTLOG2 2>&1
 else
@@ -507,7 +507,7 @@ sqlplus -S -R 3 "$LOGON_STR" > $MOVEREDOLOG <<EOF
     begin
         for olog in onl loop
             stmt := 'alter database add logfile thread ' ||
-                    olog.thr || ' ''$redodg'' size ' ||
+                    olog.thr || ' ''$redo_dest'' size ' ||
                     olog.kbytes || 'K';
             dbms_output.put_line(stmt);
             execute immediate stmt;
