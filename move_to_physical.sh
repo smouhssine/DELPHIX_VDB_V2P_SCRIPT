@@ -4,11 +4,11 @@
 # 12/11/2019 Initial vesion
 # All rights reserved.
 #
-# move-to-physical.sh
+# move_to_physical.sh ported from delphix's move_to_asm.sh
 # Script to move a VDB to a physical database running on Oracle physical directories.
 # Applies to Single Instance and RAC databases.
 #
-# Usage: move-to-physical.sh [-noask] [-parallel #] [-dbunique db_unique_name] ["<data_file_destination>"] ["<redo_file_destination>"]
+# Usage: move_to_physical.sh [-noask] [-parallel #] [-dbunique db_unique_name] ["<data_file_destination>"] ["<redo_file_destination>"]
 #
 # Description of arguments:
 #   -noask    = Do not prompt for confirmation before moving the VDB. Default is to prompt.
@@ -22,7 +22,7 @@
 #  1) VDB Provision post-script: provision and move as a single provision job.
 #  2) Execute against a VDB: move a VDB into an ASM instance running on the same target host.
 #
-# Important: post-steps to complete the move to physical directory are displayed in move-to-physical.sh_<SID>_run<XXX>.log
+# Important: post-steps to complete the move to physical directory are displayed in move_to_physical.sh_<SID>_run<XXX>.log
 #
 # Example : move a single instance VDB to an physical instance
 # There is one /app/oradata/datafile destination to contain all files for the database.
